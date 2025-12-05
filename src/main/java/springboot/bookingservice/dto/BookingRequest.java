@@ -1,5 +1,7 @@
 package springboot.bookingservice.dto;
 
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,13 +18,24 @@ import java.util.UUID;
 @Builder
 public class BookingRequest {
 
-  private UUID userId;
-  private LocalDateTime bookingDate;
-  private List<UUID> serviceIds;
-  private UUID vehicleId;
-  private String additionalNotes;
-  private String paymentMethod;
-  private String phoneNumber;
-  private BigDecimal totalPrice;
-  private String status;
+    @NotNull(message = "User ID is required")
+    private UUID userId;
+
+    @NotNull(message = "Booking date is required")
+    @Future(message = "Booking date must be in the future")
+    private LocalDateTime bookingDate;
+
+    @NotNull(message = "At least one service must be selected")
+    private List<UUID> serviceIds;
+
+    @NotNull(message = "Vehicle ID is required")
+    private UUID vehicleId;
+
+    private String additionalNotes;
+
+    private String paymentMethod;
+
+    private String phoneNumber;
+
+    private BigDecimal totalPrice;
 }

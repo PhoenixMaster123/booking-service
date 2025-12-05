@@ -27,4 +27,6 @@ public class BookingResponse {
   private String paymentMethod;
   private String phoneNumber;
   private BigDecimal totalPrice;
+  private String vehicleDescription;
+  private String serviceNames;
 }
