@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,13 +35,40 @@ public class BookingController {
 
     bookingService.createBooking(request);
 
-//    messagingTemplate.convertAndSend("/topic/bookings", booking);
-
     return ResponseEntity.ok().build();
   }
 
-    @GetMapping
-    public ResponseEntity<GetBookingResponse> getAllBookings(@RequestParam("userId") UUID userId){
-        return bookingService.getBookingsByUser(userId);
+  @GetMapping
+  public ResponseEntity<GetBookingResponse> getBookings(
+      @RequestParam(value = "userId", required = false) UUID userId,
+      @RequestParam(value = "status", required = false) String status) {
+
+    if (userId != null) {
+      return bookingService.getBookingsByUser(userId);
+    } else if (status != null) {
+      return bookingService.getBookingsByStatus(status);
+    } else {
+      return ResponseEntity.badRequest().build();
+    }
+  }
+
+    /**
+     * Endpoint to cancel a booking.
+     * Called by Scheduler when time expires.
+     */
+    @PostMapping("/{id}/cancel")
+    public ResponseEntity<Void> cancelBooking(@PathVariable("id") UUID bookingId) {
+        bookingService.cancelBooking(bookingId);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Endpoint to archive a booking.
+     * Called by Scheduler for old data.
+     */
+    @PostMapping("/{id}/archive")
+    public ResponseEntity<Void> archiveBooking(@PathVariable("id") UUID bookingId) {
+        bookingService.archiveBooking(bookingId);
+        return ResponseEntity.ok().build();
     }
 }

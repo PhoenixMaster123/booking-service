@@ -10,6 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -33,6 +34,10 @@ public class Booking {
 
     private String additionalNotes;
 
+    private String paymentMethod;
+
+    private String phoneNumber;
+
     @Column(nullable = false)
     private BigDecimal totalPrice;
 
@@ -52,5 +57,10 @@ public class Booking {
 
     @Column(name = "vehicle_id")
     private UUID vehicleId;
+
+    @ElementCollection
+    @CollectionTable(name = "booking_services", joinColumns = @JoinColumn(name = "booking_id"))
+    @Column(name = "service_id")
+    private List<UUID> serviceIds;
 
 }
